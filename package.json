@@ -1,0 +1,55 @@
+{
+  "name": "moleculer-axios",
+  "version": "0.1.0",
+  "description": "Axios based HTTP client for Moleculer services",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon examples/index.js",
+    "ci": "jest --watch",
+    "test": "jest --coverage",
+    "lint": "eslint --ext=.js src test",
+    "deps": "npm-check -u",
+    "coverall": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+  },
+  "keywords": [
+    "moleculer",
+    "microservice"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amccormick/moleculer-request.git"
+  },
+  "author": "Adam McCormick",
+  "license": "MIT",
+  "peerDependencies": {
+    "moleculer": "^0.13.0"
+  },
+  "devDependencies": {
+    "benchmarkify": "^2.1.1",
+    "coveralls": "^3.0.3",
+    "eslint": "^5.16.0",
+    "jest": "^24.7.1",
+    "jest-cli": "^24.7.1",
+    "moleculer": "^0.13.0",
+    "nodemon": "^1.18.11",
+    "npm-check": "5.9.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "rootDir": "./src",
+    "roots": [
+      "../test"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/services/"
+    ]
+  },
+  "engines": {
+    "node": ">= 8.x.x"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "lodash": "^4.17.11"
+  }
+}
