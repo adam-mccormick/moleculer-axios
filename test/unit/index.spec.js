@@ -3,7 +3,7 @@
 const { ServiceBroker } = require("moleculer");
 const AxiosService = require("../../src");
 
-describe("Test axios service", () => {
+describe("The axios service", () => {
 	const broker = new ServiceBroker();
 	const service = broker.createService(AxiosService);
 
@@ -13,31 +13,41 @@ describe("Test axios service", () => {
 	it("should be created", () => {
 		expect(service).toBeDefined();
 	});
-	
+
 	it("should contain axios instance", () => {
 		expect(service.axios).toBeDefined();
 	});
-	
+
 	it("should have all default actions", () => {
 		expect(Object.keys(service.actions)).toEqual(expect.arrayContaining([
 			"get","put","post","delete","patch","options","head","request"
 		]));
 	});
-});
 
-describe.each(AxiosService.METHODS)("Invoking action for %s", (method) => {
-	const broker = new ServiceBroker();
-	const service = broker.createService(AxiosService);
-
-	beforeAll(() => broker.start());
-	afterAll(() => broker.stop());
-	test(`should call axios.${method}`, () => {
-		service.axios[method] = jest.fn();
-		broker.call(`axios.${method}`).then(() => {
-			expect(service.axios[method]).toBeCalledTimes(1);
-		});
+	describe("should invoke axios with correct config", () => {
+		it.each(AxiosService.METHODS)("when using %s", (method => {
+			service.axios.request = jest.fn(() => Promise.resolve());
+			if(method === "request"){
+				const config = {
+					url: "http://httpbin.org/status/200",
+					method: "get"
+				};
+				return broker.call("axios.request", { config }).then(() => {
+					expect(service.axios.request).toHaveBeenNthCalledWith(1, config);
+				});
+			}
+			return broker.call(`axios.${method}`, { url: "http://httpbin.org/status/200" }).then(() => {
+				expect(service.axios.request).toBeCalledTimes(1);
+				if(method !== "request") {
+					expect(service.axios.request).toHaveBeenCalledWith(expect.objectContaining({
+						method: method
+					}));
+				}
+			});
+		}));
 	});
 });
+
 
 describe("When used as a mixin", () => {
 	const broker = new ServiceBroker();
@@ -46,11 +56,14 @@ describe("When used as a mixin", () => {
 		mixins: [AxiosService],
 		settings: {
 			axios: {
-				expose: ["get", "post"]
+				expose: ["get", "post"],
 			}
 		}
 	});
-	
+
+	beforeAll(() => broker.start());
+	afterAll(() => broker.stop());
+
 	it("should only contain exposed actions", () => {
 		expect(service.actions.get).toBeInstanceOf(Function);
 		expect(service.actions.post).toBeInstanceOf(Function);

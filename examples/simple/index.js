@@ -15,7 +15,7 @@ broker.createService(Axios);
 broker.start().then(() => {
 	// Call action
 	broker
-		.call("axios.get", {url: "https://httpbin.org/status/500"})
+		.call("axios.get", {url: "https://httpbin.org/status/200"})
 		.then(response => broker.logger.info(response.data))
 		.catch(broker.logger.error);
 
