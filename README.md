@@ -14,7 +14,7 @@ Axios based HTTP client for Moleculer services
 ## Features
 
 ## Install
-```
+```bash
 npm install moleculer-axios --save
 ```
 
