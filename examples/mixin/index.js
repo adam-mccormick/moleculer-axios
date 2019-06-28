@@ -18,7 +18,8 @@ broker.createService({
 		axios: {
 			responder: "status",
 			config: {
-				baseURL: "http://httpbin.org/status/200"
+				url: "/",
+				baseURL: "http://httpbin.org/"
 			}
 		}
 	},
@@ -34,7 +35,7 @@ broker.createService({
 // Start server
 broker.start().then(() => {
 	// Call action
-	broker.call("example.get")
+	broker.call("example.get", { url: "/status/200"})
 		.then(response => broker.logger.info("GOT IT", response))
 		.catch(err => {
 			broker.logger.error("OOPS!!!", err);

@@ -21,8 +21,8 @@ const RESPONDERS = {
 	full: (res) => res,
 	data: (res) => res.data,
 	headers: (res) => res.headers,
-	status: (res) => res.statusCode,
-	ok: (res) => res.statusCode < 399,
+	status: (res) => res.status,
+	ok: (res) => res.status < 400,
 };
 
 const SAFE_METHOD_PARAMS = {
@@ -119,12 +119,12 @@ module.exports = {
 			 */
 			logging: {
 				level: "info",
-				request: {
-					include: ["url", "method"]
-				},
-				response: {
-					include: ["config.url", "status", "statusText"]
-				}
+				// request: {
+				// 	include: ["url", "method"]
+				// },
+				// response: {
+				// 	include: ["config.url", "status", "statusText"]
+				// }
 			}
 		},
 	},
@@ -227,8 +227,8 @@ module.exports = {
 
 	/**
 	 * Service created lifecycle event handler which constructs
-	 * the axios instance for this service and removes actions
-	 * which are declared to not be exposed.
+	 * and configures axios instance for this service and removes
+	 * actions which are declared to not be exposed.
 	 *
 	 */
 	created() {
@@ -245,10 +245,11 @@ module.exports = {
 			});
 		}
 
-
+		// TODO: crap logging
 		if(logging && logging.level in this.logger) {
 			this.axios.interceptors.request.use((config) => {
-				this.logger[logging.level]("Request sent", _.pick(config, logging.request.include));
+				// TODO get uri method of axios is broken
+				this.logger[logging.level](`=> ${config.method.toUpperCase()} ${this.axios.getUri(config)}`);
 				return config;
 			}, (error) => {
 				this.logger.error("Could not send request", error);
@@ -256,10 +257,10 @@ module.exports = {
 			});
 
 			this.axios.interceptors.response.use((response) => {
-				this.logger[logging.level]("Response received", _.pick(response, logging.response.include));
+				this.logger[logging.level](`<= ${response.status} - ${response.statusText} ${this.axios.getUri(response.config)}`);
 				return response;
 			}, (error) => {
-				//this.logger.error("Error received", error);
+				this.logger.error("Error received", error);
 				return this.Promise.reject(error);
 			});
 		}
