@@ -36,6 +36,7 @@
     "npm-check": "5.9.0"
   },
   "jest": {
+    "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "rootDir": "./src",
     "roots": [
