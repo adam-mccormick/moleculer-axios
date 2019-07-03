@@ -7,7 +7,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/adam-mccormick/moleculer-axios/badge.svg)](https://snyk.io/test/github/adam-mccormick/moleculer-axios)
 [![Join the chat at https://gitter.im/moleculerjs/moleculer](https://badges.gitter.im/moleculerjs/moleculer.svg)](https://gitter.im/moleculerjs/moleculer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-# moleculer-request [![NPM version](https://img.shields.io/npm/v/moleculer-axios.svg)](https://www.npmjs.com/package/moleculer-axios)
+# moleculer-axios [![NPM version](https://img.shields.io/npm/v/moleculer-axios.svg)](https://www.npmjs.com/package/moleculer-axios)
 
 Axios based HTTP client for Moleculer services
 
