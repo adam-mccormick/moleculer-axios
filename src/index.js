@@ -221,7 +221,21 @@ module.exports = {
 
 			return this.axios.request(config)
 				.then(response => this.$responder(response))
-				.catch(err => this.Promise.reject(new MoleculerAxiosError(err.message, 500, "HTTP_REQUEST_ERROR", err)));
+				.catch(err => {
+					if (err.response) {
+						// The request was made and the server responded with a status code
+						// that falls out of the range of 2xx
+						this.logger.error("Received error response", err.response);
+					} else if (err.request) {
+						// The request was made but no response was received
+						this.logger.error("No response received", err.request);
+					} else {
+						// Something happened in setting up the request that triggered an Error
+						this.logger.error("Error creating request", err.message);
+					}
+					this.logger.error(err.config);
+					return this.Promise.reject(new MoleculerAxiosError(err.message, 500, "HTTP_REQUEST_ERROR", err));
+				});
 		}
 	},
 
@@ -251,17 +265,11 @@ module.exports = {
 				// TODO get uri method of axios is broken
 				this.logger[logging.level](`=> ${config.method.toUpperCase()} ${this.axios.getUri(config)}`);
 				return config;
-			}, (error) => {
-				this.logger.error("Could not send request", error);
-				return this.Promise.reject(error);
 			});
 
 			this.axios.interceptors.response.use((response) => {
 				this.logger[logging.level](`<= ${response.status} - ${response.statusText} ${this.axios.getUri(response.config)}`);
 				return response;
-			}, (error) => {
-				this.logger.error("Error received", error);
-				return this.Promise.reject(error);
 			});
 		}
 	},

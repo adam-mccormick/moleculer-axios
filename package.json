@@ -1,6 +1,6 @@
 {
   "name": "moleculer-axios",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Axios based HTTP client for Moleculer services",
   "main": "index.js",
   "scripts": {
