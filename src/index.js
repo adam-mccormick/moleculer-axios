@@ -220,22 +220,7 @@ module.exports = {
 			});
 
 			return this.axios.request(config)
-				.then(response => this.$responder(response))
-				.catch(err => {
-					if (err.response) {
-						// The request was made and the server responded with a status code
-						// that falls out of the range of 2xx
-						this.logger.error("Received error response", err.response);
-					} else if (err.request) {
-						// The request was made but no response was received
-						this.logger.error("No response received", err.request);
-					} else {
-						// Something happened in setting up the request that triggered an Error
-						this.logger.error("Error creating request", err.message);
-					}
-					this.logger.error(err.config);
-					return this.Promise.reject(new MoleculerAxiosError(err.message, 500, "HTTP_REQUEST_ERROR", err));
-				});
+				.then(response => this.$responder(response));
 		}
 	},
 
@@ -270,6 +255,23 @@ module.exports = {
 			this.axios.interceptors.response.use((response) => {
 				this.logger[logging.level](`<= ${response.status} - ${response.statusText} ${this.axios.getUri(response.config)}`);
 				return response;
+			});
+
+			this.axios.interceptors.response.use(null, err => {
+				if (err.response) {
+					// The request was made and the server responded with a status code
+					// that falls out of the range of 2xx
+					this.logger.error(`Received error response: ${err.response.status} - ${err.response.statusText}`, err.response.data);
+				}
+				else if (err.request) {
+					// The request was made but no response was received
+					this.logger.error("No response received", err.message);
+				}
+				else {
+					// Something happened in setting up the request that triggered an Error
+					this.logger.error("Error creating request", err.message);
+				}
+				return this.Promise.reject(new MoleculerAxiosError(err.message, 500, "HTTP_REQUEST_ERROR"));
 			});
 		}
 	},
