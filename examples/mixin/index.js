@@ -35,10 +35,10 @@ broker.createService({
 // Start server
 broker.start().then(() => {
 	// Call action
-	broker.call("example.get", { url: "/status/200"})
+	broker.call("example.get", { url: "/status/500"})
 		.then(response => broker.logger.info("GOT IT", response))
 		.catch(err => {
-			broker.logger.error("OOPS!!!", err);
+			broker.logger.error("OOPS!!!", err.type);
 		});
 
 }).then(() => {
